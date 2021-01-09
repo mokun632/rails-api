@@ -59,16 +59,14 @@ module Api
       end
 
       def set_line_food(ordered_food)
-        aaa = LineFood.find(params[:food_id])
-        puts "aaaaa: #{aaa.active}"
-        if ordered_food.line_food.present?
+        unless LineFood.where(id: params[:food_id]).active.empty?
           @line_food = ordered_food.line_food
           @line_food.attributes = {
             count: ordered_food.line_food.count + params[:count],
             active: true
           }
         else
-          @line_food = ordered_food.build_line_food(
+          @line_food = ordered_food.line_food.new(
             count: params[:count],
             restaurant: ordered_food.restaurant,
             active: true
