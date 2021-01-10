@@ -18,21 +18,14 @@ module Api
       end
 
       def create
+        # byebug
         if LineFood.active.other_restaurant(@ordered_food.restaurant.id).exists? 
           return render json: {
             exists_restaurant: LineFood.other_restaurant(@ordered_food.restaurant.id).first.restaurant.name,
             new_restaurant: Food.find(params[:food_id]).restaurant.name,
           },status: :not_acceptable
-        end
-
-        set_line_food(@ordered_food)
-
-        if @line_food.save
-          render json: {
-            line_foods: @line_food
-          }, status: :created
         else
-          render json: {}, status: :internal_server_error
+          save_line_food
         end
       end
 
@@ -40,16 +33,7 @@ module Api
         LineFood.active.other_restaurant(@ordered_food.restaurant.id).each do |line_foods|
           line_foods.update_attribute(:active, false)
         end
-
-        set_line_food(@ordered_food)
-
-        if @line_food.save
-          render json: {
-            line_foods: @line_food
-          }, status: :created
-        else
-          render json: {}, status: :internal_server_error
-        end
+        save_line_food
       end
 
       private
@@ -58,21 +42,33 @@ module Api
         @ordered_food = Food.find(params[:food_id])
       end
 
+      def save_line_food
+        set_line_food(@ordered_food)
+        if @line_food.save
+          render json: {
+            line_foods: @line_food
+          }, status: :created
+        else
+          render json: {}, status: :internal_server_error
+        end
+      end
+
       def set_line_food(ordered_food)
-        unless LineFood.where(id: params[:food_id]).active.empty?
-          @line_food = ordered_food.line_food
+        # byebug
+        unless ordered_food.line_foods.active.empty?
+          @line_food = ordered_food.line_foods.find_by(active: true)
           @line_food.attributes = {
-            count: ordered_food.line_food.count + params[:count],
-            active: true
+            count: @line_food.count + params[:count],
           }
         else
-          @line_food = ordered_food.line_food.new(
+          @line_food = ordered_food.line_foods.new(
             count: params[:count],
             restaurant: ordered_food.restaurant,
             active: true
           )
         end
       end
+
     end
   end
 end

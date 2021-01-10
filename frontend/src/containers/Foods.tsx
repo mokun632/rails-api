@@ -18,7 +18,7 @@ import { Skeleton } from '@material-ui/lab';
 import { FoodWrapper } from '../components/Icons/FoodWrapper';
 import { FoodOrderDialog } from '../components/FoodOrderDialog';
 import { postLineFoods, replaceLineFoods } from '../apis/line_foods';
-import { NewOrderCOnfirmDialog } from '../components/NewOrderConfirmDialog';
+import { NewOrderConfirmDialog } from '../components/NewOrderConfirmDialog';
 
 const HeaderWrapper = styled.div`
   display: flex;
@@ -81,7 +81,6 @@ export const Foods: FC = () => {
     }).then(() => history.push('/orders'))
       .catch((e) => {
         if(e.response.status === HTTP_STATUS_CODE.NOT_ACCEPTABLE) {
-          console.log(e.response.data.exists_restaurant);
           setState({
             ...state,
             isOpenOrderDialog: false,
@@ -187,7 +186,7 @@ export const Foods: FC = () => {
       {
         state.isOpenNewOrderDialog 
         &&
-        <NewOrderCOnfirmDialog
+        <NewOrderConfirmDialog
         isOpen={state.isOpenNewOrderDialog}
         onClose={() => setState({...state, isOpenNewOrderDialog: false})}
         existingRestaurantName={state.existingRestaurantName}

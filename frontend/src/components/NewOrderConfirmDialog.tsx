@@ -10,7 +10,7 @@ type Props = {
   onClickSubmit: () => void,
 }
 
-export const NewOrderCOnfirmDialog: FC<Props> = ({
+export const NewOrderConfirmDialog: FC<Props> = ({
   isOpen,
   onClose,
   existingRestaurantName,
@@ -26,7 +26,6 @@ export const NewOrderCOnfirmDialog: FC<Props> = ({
       新規注文を開始しますか？
     </DialogTitle>
     <DialogContent>
-      {console.log(existingRestaurantName)}
       <p>
         {
           `ご注文に${existingRestaurantName}の商品が含まれています。
